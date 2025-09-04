@@ -71,12 +71,18 @@ def save_data(train_data: pd.DataFrame, test_data: pd.DataFrame, data_path: str)
 
 def main():
     try:
-        params = load_params(params_path='params.yaml')
-        test_size = params['data_ingestion']['test_size']
-        # test_size = 0.2
+        # params = load_params(params_path='params.yaml')
+        # test_size = params['data_ingestion']['test_size']
+        test_size = 0.2
         
-        df = load_data(data_url='https://raw.githubusercontent.com/vikashishere/Datasets/refs/heads/main/data.csv')
-        # s3 = s3_connection.s3_operations("bucket-name", "accesskey", "secretkey")
+        df = load_data(data_url='https://raw.githubusercontent.com/sa-rehman1/Complete_ML_Pipeline_Project/9b0079fc5bd240e212595b389af3aeddf03b8aa4/notebooks/data.csv')
+        # from dotenv import load_dotenv
+        # import os
+        # load_dotenv()
+        # aws_access_key = os.environ.get("aws_access_key")
+        # aws_secret_access_key = os.environ.get("aws_secret_access_key")
+        # s3_bucket_name= os.environ.get("s3_bucket_name")
+        # s3 = s3_connection.s3_operations(s3_bucket_name,aws_access_key,aws_secret_access_key)
         # df = s3.fetch_file_from_s3("data.csv")
 
 
