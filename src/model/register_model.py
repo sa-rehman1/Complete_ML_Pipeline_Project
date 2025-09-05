@@ -28,14 +28,16 @@ warnings.filterwarnings("ignore")
 # mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
 # -------------------------------------------------------------------------------------
 from dotenv import load_dotenv
-import os
 load_dotenv()
-mlflow_tracking_uri = os.environ.get("MLFLOW_TRACKING_URI")
-dagshub_cred_owner = os.environ.get("DAGSHUB_CRED_OWNER")
-dagshub_cred_name = os.environ.get("DAGSHUB_CRED_NAME")
-# -------------------------------------------------------------------------------------
-mlflow.set_tracking_uri(mlflow_tracking_uri)
-dagshub.init(repo_owner=dagshub_cred_owner, repo_name=dagshub_cred_name, mlflow=True)
+dagshub_token = os.getenv("CAPSTONE_TEST")
+if not dagshub_token:
+    raise EnvironmentError("CAPSTONE_TEST environment variable is not set")
+
+os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
+
+
+mlflow_tracking_uri = os.getenv("MLFLOW_TRACKING_URI")
 # -------------------------------------------------------------------------------------
 
 
