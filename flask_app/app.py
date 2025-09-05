@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request
 import mlflow
 import pickle
 import os
@@ -117,7 +117,7 @@ def predict():
     text = request.form.get("text", "").strip()
     if not text:
         REQUEST_LATENCY.labels(endpoint="/predict").observe(time.time() - start_time)
-        return redirect(url_for("home"))
+        return render_template("index.html", result=None)
 
     text = normalize_text(text)
     features = vectorizer.transform([text])
@@ -129,8 +129,8 @@ def predict():
     PREDICTION_COUNT.labels(prediction=str(prediction)).inc()
     REQUEST_LATENCY.labels(endpoint="/predict").observe(time.time() - start_time)
 
-    # Redirect to home with result to avoid POST/refresh issues
-    return redirect(url_for("home", result=prediction))
+    # Directly render template with prediction (no redirect)
+    return render_template("index.html", result=prediction)
 
 @app.route("/metrics", methods=["GET"])
 def metrics():
