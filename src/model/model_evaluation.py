@@ -26,12 +26,19 @@ from src.logger import logging
 # repo_owner = "vikashdas770"
 # repo_name = "YT-Capstone-Project"
 
-from dotenv import load_dotenv
 import os
-load_dotenv()
+import mlflow
+import dagshub
+
 mlflow_tracking_uri = os.environ.get("MLFLOW_TRACKING_URI")
 dagshub_cred_owner = os.environ.get("DAGSHUB_CRED_OWNER")
 dagshub_cred_name = os.environ.get("DAGSHUB_CRED_NAME")
+
+mlflow.set_tracking_uri(mlflow_tracking_uri)
+
+# Only init dagshub locally, skip in CI
+if not os.getenv("GITHUB_ACTIONS"):
+    dagshub.init(repo_owner=dagshub_cred_owner, repo_name=dagshub_cred_name, mlflow=True)
 
 
 # Set up MLflow tracking URI
@@ -40,8 +47,8 @@ dagshub_cred_name = os.environ.get("DAGSHUB_CRED_NAME")
 
 # Below code block is for local use
 # -------------------------------------------------------------------------------------
-mlflow.set_tracking_uri(mlflow_tracking_uri)
-dagshub.init(repo_owner=dagshub_cred_owner, repo_name=dagshub_cred_name, mlflow=True)
+# mlflow.set_tracking_uri(mlflow_tracking_uri)
+# dagshub.init(repo_owner=dagshub_cred_owner, repo_name=dagshub_cred_name, mlflow=True)
 # -------------------------------------------------------------------------------------
 
 
