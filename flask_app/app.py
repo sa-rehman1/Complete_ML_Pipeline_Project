@@ -70,15 +70,28 @@ def normalize_text(text):
 
 # Below code block is for local use
 # -------------------------------------------------------------------------------------
-from dotenv import load_dotenv
-import os
-load_dotenv()
-mlflow_tracking_uri = os.environ.get("MLFLOW_TRACKING_URI")
-dagshub_cred_owner = os.environ.get("dagshub_cred_owner")
-dagshub_cred_name = os.environ.get("dagshub_cred_name")
+# from dotenv import load_dotenv
+# import os
+# load_dotenv()
+# mlflow_tracking_uri = os.environ.get("MLFLOW_TRACKING_URI")
+# dagshub_cred_owner = os.environ.get("dagshub_cred_owner")
+# dagshub_cred_name = os.environ.get("dagshub_cred_name")
 
-mlflow.set_tracking_uri(mlflow_tracking_uri)
-dagshub.init(repo_owner=dagshub_cred_owner, repo_name=dagshub_cred_name, mlflow=True)
+
+
+# mlflow.set_tracking_uri(mlflow_tracking_uri)
+# dagshub.init(repo_owner=dagshub_cred_owner, repo_name=dagshub_cred_name, mlflow=True)
+from dotenv import load_dotenv
+load_dotenv()
+dagshub_token = os.getenv("CAPSTONE_TEST")
+if not dagshub_token:
+    raise EnvironmentError("CAPSTONE_TEST environment variable is not set")
+
+os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
+
+
+mlflow_tracking_uri = os.getenv("MLFLOW_TRACKING_URI")
 # -------------------------------------------------------------------------------------
 
 # Below code block is for production use

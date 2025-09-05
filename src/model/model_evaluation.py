@@ -14,31 +14,37 @@ from src.logger import logging
 # Below code block is for production use
 # -------------------------------------------------------------------------------------
 # Set up DagsHub credentials for MLflow tracking
-# dagshub_token = os.getenv("CAPSTONE_TEST")
-# if not dagshub_token:
-#     raise EnvironmentError("CAPSTONE_TEST environment variable is not set")
+from dotenv import load_dotenv
+load_dotenv()
+dagshub_token = os.getenv("CAPSTONE_TEST")
+if not dagshub_token:
+    raise EnvironmentError("CAPSTONE_TEST environment variable is not set")
 
-# os.environ["mlflow_tracking_uri"] = os.getenv("mlflow_tracking_uri")
-# os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
+os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
+
+
+mlflow_tracking_uri = os.getenv("MLFLOW_TRACKING_URI")
 
 
 # dagshub_url = "https://dagshub.com"
 # repo_owner = "vikashdas770"
 # repo_name = "YT-Capstone-Project"
 
-import os
-import mlflow
-import dagshub
 
-mlflow_tracking_uri = os.environ.get("MLFLOW_TRACKING_URI")
-dagshub_cred_owner = os.environ.get("DAGSHUB_CRED_OWNER")
-dagshub_cred_name = os.environ.get("DAGSHUB_CRED_NAME")
+# import os
+# import mlflow
+# import dagshub
 
-mlflow.set_tracking_uri(mlflow_tracking_uri)
+# mlflow_tracking_uri = os.environ.get("MLFLOW_TRACKING_URI")
+# dagshub_cred_owner = os.environ.get("DAGSHUB_CRED_OWNER")
+# dagshub_cred_name = os.environ.get("DAGSHUB_CRED_NAME")
 
-# Only init dagshub locally, skip in CI
-if not os.getenv("GITHUB_ACTIONS"):
-    dagshub.init(repo_owner=dagshub_cred_owner, repo_name=dagshub_cred_name, mlflow=True)
+# mlflow.set_tracking_uri(mlflow_tracking_uri)
+
+# # Only init dagshub locally, skip in CI
+# if not os.getenv("GITHUB_ACTIONS"):
+#     dagshub.init(repo_owner=dagshub_cred_owner, repo_name=dagshub_cred_name, mlflow=True)
 
 
 # Set up MLflow tracking URI
