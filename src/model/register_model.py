@@ -31,8 +31,8 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 mlflow_tracking_uri = os.environ.get("MLFLOW_TRACKING_URI")
-dagshub_cred_owner = os.environ.get("dagshub_cred_owner")
-dagshub_cred_name = os.environ.get("dagshub_cred_name")
+dagshub_cred_owner = os.environ.get("DAGSHUB_CRED_OWNER")
+dagshub_cred_name = os.environ.get("DAGSHUB_CRED_NAME")
 # -------------------------------------------------------------------------------------
 mlflow.set_tracking_uri(mlflow_tracking_uri)
 dagshub.init(repo_owner=dagshub_cred_owner, repo_name=dagshub_cred_name, mlflow=True)
