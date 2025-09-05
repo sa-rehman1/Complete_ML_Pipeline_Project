@@ -22,7 +22,7 @@ def load_data(file_path: str) -> pd.DataFrame:
 def train_model(X_train: np.ndarray, y_train: np.ndarray) -> LogisticRegression:
     """Train the Logistic Regression model."""
     try:
-        clf = LogisticRegression(C=1, solver='liblinear', penalty='l1')
+        clf = LogisticRegression(C=10, solver='liblinear', penalty='l2')
         clf.fit(X_train, y_train)
         logging.info('Model training completed')
         return clf

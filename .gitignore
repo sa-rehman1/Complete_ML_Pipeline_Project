@@ -211,4 +211,5 @@ test.ipynb
 
 .dvc
 local_s3/
-data
+data/
+models/
