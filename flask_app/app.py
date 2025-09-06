@@ -9,10 +9,9 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 import string
 import re
-import dagshub
 import numpy as np
-
 import warnings
+
 warnings.simplefilter("ignore", UserWarning)
 warnings.filterwarnings("ignore")
 
@@ -87,25 +86,51 @@ PREDICTION_COUNT = Counter(
 
 # -------------------- Load Model & Vectorizer --------------------
 model_name = "my_model"
-def get_latest_model_version(model_name):
-    client = mlflow.MlflowClient()
-    latest_version = client.get_latest_versions(model_name, stages=["Production"])
-    if not latest_version:
-        latest_version = client.get_latest_versions(model_name, stages=["Staging", "None"])
-    return latest_version[0].version if latest_version else None
 
-model_version = get_latest_model_version(model_name)
-model_uri = f'models:/{model_name}/{model_version}'
-print(f"Fetching model from: {model_uri}")
-model = mlflow.pyfunc.load_model(model_uri)
-vectorizer = pickle.load(open('models/vectorizer.pkl', 'rb'))
+def get_latest_model_version_safe(model_name):
+    client = mlflow.MlflowClient()
+    
+    # Try Production first
+    versions = client.get_latest_versions(model_name, stages=["Production"])
+    
+    if not versions:
+        # Fallback to Staging or None
+        versions = client.get_latest_versions(model_name, stages=["Staging", "None"])
+    
+    if not versions:
+        raise ValueError(f"Registered model '{model_name}' not found in MLflow registry")
+    
+    return versions[0].version
+
+# Load vectorizer
+vectorizer_path = "models/vectorizer.pkl"
+if not os.path.exists(vectorizer_path):
+    raise FileNotFoundError(f"Vectorizer file not found at {vectorizer_path}")
+vectorizer = pickle.load(open(vectorizer_path, 'rb'))
+
+# Load MLflow model safely
+try:
+    model_version = get_latest_model_version_safe(model_name)
+    model_uri = f"models:/{model_name}/{model_version}"
+    print(f"Fetching model from: {model_uri}")
+    model = mlflow.pyfunc.load_model(model_uri)
+except ValueError as e:
+    print(e)
+    # Optional: load a local fallback model instead of crashing
+    local_model_path = "models/local_model.pkl"
+    if os.path.exists(local_model_path):
+        print(f"Loading local fallback model from {local_model_path}")
+        model = pickle.load(open(local_model_path, "rb"))
+    else:
+        model = None
+        print("No model available. Predictions will not work.")
 
 # -------------------- Routes --------------------
 @app.route("/")
 def home():
     REQUEST_COUNT.labels(method="GET", endpoint="/").inc()
     start_time = time.time()
-    result = request.args.get("result", None)  # get prediction if redirected
+    result = request.args.get("result", None)
     REQUEST_LATENCY.labels(endpoint="/").observe(time.time() - start_time)
     return render_template("index.html", result=result)
 
@@ -113,6 +138,10 @@ def home():
 def predict():
     REQUEST_COUNT.labels(method="POST", endpoint="/predict").inc()
     start_time = time.time()
+
+    if model is None:
+        REQUEST_LATENCY.labels(endpoint="/predict").observe(time.time() - start_time)
+        return render_template("index.html", result="Model not available")
 
     text = request.form.get("text", "").strip()
     if not text:
@@ -129,7 +158,6 @@ def predict():
     PREDICTION_COUNT.labels(prediction=str(prediction)).inc()
     REQUEST_LATENCY.labels(endpoint="/predict").observe(time.time() - start_time)
 
-    # Directly render template with prediction (no redirect)
     return render_template("index.html", result=prediction)
 
 @app.route("/metrics", methods=["GET"])
