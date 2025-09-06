@@ -27,11 +27,56 @@ spec:
             memory: "512Mi"
             cpu: "1"
         env:
+        - name: MLFLOW_TRACKING_URI
+          valueFrom:
+            secretKeyRef:
+              name: capstone-secret
+              key: MLFLOW_TRACKING_URI
+        - name: DAGSHUB_CRED_OWNER
+          valueFrom:
+            secretKeyRef:
+              name: capstone-secret
+              key: DAGSHUB_CRED_OWNER
+        - name: DAGSHUB_CRED_NAME
+          valueFrom:
+            secretKeyRef:
+              name: capstone-secret
+              key: DAGSHUB_CRED_NAME
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: capstone-secret
+              key: AWS_ACCESS_KEY_ID
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: capstone-secret
+              key: AWS_SECRET_ACCESS_KEY
+        - name: AWS_REGION
+          valueFrom:
+            secretKeyRef:
+              name: capstone-secret
+              key: AWS_REGION
+        - name: s3_bucket_name
+          valueFrom:
+            secretKeyRef:
+              name: capstone-secret
+              key: s3_bucket_name
         - name: CAPSTONE_TEST
           valueFrom:
             secretKeyRef:
               name: capstone-secret
               key: CAPSTONE_TEST
+        - name: ECR_REPOSITORY
+          valueFrom:
+            secretKeyRef:
+              name: capstone-secret
+              key: ECR_REPOSITORY
+        - name: AWS_ACCOUNT_ID
+          valueFrom:
+            secretKeyRef:
+              name: capstone-secret
+              key: AWS_ACCOUNT_ID
 
 ---
 apiVersion: v1
