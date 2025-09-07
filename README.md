@@ -26,13 +26,14 @@ The project is structured as modular pipelines under the `src/` folder:
 
 ```
 
+```bash
 src/
-│── data\_ingestion.py
-│── data\_preprocessing.py
-│── feature\_engineering.py
-│── model\_building.py
-│── model\_evaluation.py
-│── register\_model.py
+│── data_ingestion.py
+│── data_preprocessing.py
+│── feature_engineering.py
+│── model_building.py
+│── model_evaluation.py
+│── register_model.py
 
 ````
 
